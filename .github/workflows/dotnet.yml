@@ -8,6 +8,7 @@ on:
     
 env:
   PKG_VERSION: 1.${{ github.run_number }}.${{ github.run_attempt }}
+  BUILD_CONF: Release
 
 jobs:
   build:
@@ -23,9 +24,9 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build -c Release --no-restore --version-suffix +${{ github.sha }} -p:VersionPrefix=$PKG_VERSION -p:FileVersion=${PKG_VERSION}.0
+      run: dotnet build -c $BUILD_CONF --no-restore --version-suffix +${{ github.sha }} -p:VersionPrefix=$PKG_VERSION -p:FileVersion=${PKG_VERSION}.0
     - name: Publish
-      run: dotnet publish -c Release --no-build 
+      run: dotnet publish -c $BUILD_CONF --no-build 
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v3
       with:
@@ -41,6 +42,9 @@ jobs:
     - name: Download NuGet packages
       uses: actions/download-artifact@v3
       with:
-        name: nuget-packages
-    - name: Push NuGet package
-      run: dotnet nuget push **/*.nupkg -s nuget.org -k ${{ secrets.NUGET_API_KEY }}
+        name: publish-folder
+    - name: Rename publish folder to module folder
+      run: mv bin/$BUILD_CONF/*/publish PSFits
+    - name: Publish to PowerShell gallery
+      run: Publish-Module -Path PSFits -NuGetApiKey ${{ secrets.NUGET_API_KEY }} -Verbose 
+      shell: pwsh
