@@ -24,7 +24,7 @@ GUID = '07a634d7-c893-4e7c-8630-9a08c79ae0fe'
 Author = 'Sebastian Godelet'
 
 # Company or vendor of this module
-CompanyName = 'Unknown'
+CompanyName = 'Sebastian Godelet'
 
 # Copyright statement for this module
 Copyright = '(c) 2022 Sebastian Godelet. All rights reserved.'
