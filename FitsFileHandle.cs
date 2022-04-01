@@ -62,18 +62,25 @@ namespace PSFits
 
         public double? YPixelSize => ReadDouble("YPIXSZ");
 
-        public int XBinning => ReadInt("XBINNING") ?? 1;
+        public int XBinning => ReadInt("XBINNING", 1);
 
-        public int YBinning => ReadInt("YBINNING") ?? 1;
+        public int YBinning => ReadInt("YBINNING", 1);
 
         public int? FocalLength => ReadInt("FOCALLEN");
 
-        public TimeSpan? ExposureTime => double.TryParse(PrimaryHDU.GetTrimmedString("EXPTIME"), out var expSec) ? TimeSpan.FromSeconds(expSec) : null as TimeSpan?;
+        public TimeSpan? ExposureTime
+        {
+            get
+            {
+                var expTimeSec = ReadDouble("EXPTIME");
+                return !double.IsNaN(expTimeSec) ? TimeSpan.FromSeconds(expTimeSec) : null as TimeSpan?;
+            }
+        }
 
         public double? Temperature => ReadDouble("CCD-TEMP");
 
-        double? ReadDouble(string prop) => double.TryParse(PrimaryHDU.GetTrimmedString(prop), out var blkLevel) ? blkLevel : null as double?;
+        double ReadDouble(string prop, double @default = double.NaN) => PrimaryHDU?.Header?.GetDoubleValue(prop, @default) ?? @default;
 
-        int? ReadInt(string prop) => int.TryParse(PrimaryHDU.GetTrimmedString(prop), out var len) ? len : null as int?;
+        int ReadInt(string prop, int @default = -1) => PrimaryHDU?.Header?.GetIntValue(prop, @default) ?? @default;
     }
 }
