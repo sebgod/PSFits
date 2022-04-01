@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 
 namespace PSFits
@@ -26,13 +27,15 @@ namespace PSFits
 
         public string Telescope => PrimaryHDU.Telescope;
 
-        public DateTime CreationDate => PrimaryHDU.CreationDate;
+        public DateTime? ObservationStartDateTime => ReadDate("DATE-OBS");
 
-        public DateTime ObservationDate => PrimaryHDU.ObservationDate;
+        public DateTime? ObservationMidDateTime => ReadDate("DATE-AVG");
 
-        public double? ObserverLatitude => ReadDouble("OBSLAT");
+        public DateTime? ObservationEndDateTime => ReadDate("DATE-END");
 
-        public double? ObserverLongitude => ReadDouble("OBSLONG");
+        public double ObserverLatitude => ReadDouble("OBSLAT");
+
+        public double ObserverLongitude => ReadDouble("OBSLONG");
 
         public string Software => PrimaryHDU.GetTrimmedString("SWCREATE");
 
@@ -44,9 +47,9 @@ namespace PSFits
 
         public string Object => PrimaryHDU.Object;
 
-        public double? RA => ReadDouble("RA");
+        public double RA => ReadDouble("RA");
 
-        public double? DEC => ReadDouble("DEC");
+        public double DEC => ReadDouble("DEC");
 
         public double BScale => PrimaryHDU.BScale;
 
@@ -54,19 +57,19 @@ namespace PSFits
 
         public int BitDepth => PrimaryHDU.BitPix;
 
-        public int? BlackLevel => ReadInt("BLKLEVEL");
+        public int BlackLevel => ReadInt("BLKLEVEL");
 
-        public int? Gain => ReadInt("GAIN");
+        public int Gain => ReadInt("GAIN");
 
-        public double? XPixelSize => ReadDouble("XPIXSZ");
+        public double XPixelSize => ReadDouble("XPIXSZ");
 
-        public double? YPixelSize => ReadDouble("YPIXSZ");
+        public double YPixelSize => ReadDouble("YPIXSZ");
 
         public int XBinning => ReadInt("XBINNING", 1);
 
         public int YBinning => ReadInt("YBINNING", 1);
 
-        public int? FocalLength => ReadInt("FOCALLEN");
+        public int FocalLength => ReadInt("FOCALLEN");
 
         public TimeSpan? ExposureTime
         {
@@ -79,8 +82,15 @@ namespace PSFits
 
         public double? Temperature => ReadDouble("CCD-TEMP");
 
-        double ReadDouble(string prop, double @default = double.NaN) => PrimaryHDU?.Header?.GetDoubleValue(prop, @default) ?? @default;
+        #region Helper functions
+        double ReadDouble(string prop, double @default = double.NaN) => PrimaryHDU.Header?.GetDoubleValue(prop, @default) ?? @default;
 
-        int ReadInt(string prop, int @default = -1) => PrimaryHDU?.Header?.GetIntValue(prop, @default) ?? @default;
+        int ReadInt(string prop, int @default = -1) => PrimaryHDU.Header?.GetIntValue(prop, @default) ?? @default;
+
+        DateTime? ReadDate(string prop) =>
+            DateTime.TryParse(PrimaryHDU.GetTrimmedString(prop), CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var date)
+                ? date
+                : null as DateTime?;
+        #endregion
     }
 }
