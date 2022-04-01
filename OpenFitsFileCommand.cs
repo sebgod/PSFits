@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Management.Automation;
-using System.Management.Automation.Runspaces;
 
 namespace PSFits
 {
@@ -14,7 +13,7 @@ namespace PSFits
             Position = 0,
             ValueFromPipeline = true,
             ValueFromPipelineByPropertyName = true)]
-        public string LiteralPath { get; set; }
+        public string Path { get; set; }
 
         [Parameter(
             Mandatory = false,
@@ -31,7 +30,7 @@ namespace PSFits
         // This method will be called for each input received from the pipeline to this cmdlet; if no input is received, this method is not called
         protected override void ProcessRecord()
         {
-            var fullName = NormalizePath(LiteralPath);
+            var fullName = NormalizePath(Path);
             if (!File.Exists(fullName))
             {
                 throw new FileNotFoundException($"Cannot find file {fullName}", fullName);
@@ -52,8 +51,8 @@ namespace PSFits
 
         public static string NormalizePath(string path)
         {
-            return Path.GetFullPath(new Uri(path).LocalPath)
-                    .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+            return System.IO.Path.GetFullPath(new Uri(path).LocalPath)
+                    .TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar)
                     .ToUpperInvariant();
         }
     }
@@ -62,6 +61,18 @@ namespace PSFits
     {
         public string FullName { get; internal set; }
 
-        internal nom.tam.fits.Fits FitsFile {get; set; }
+        public int Size => FitsFile?.Size() ?? -1;
+
+        public string Author => FitsFile?.ReadHDU()?.Author;
+
+        public int[] Axes => FitsFile?.ReadHDU()?.Axes;
+
+        public string Instrument => FitsFile?.ReadHDU()?.Instrument;
+
+        public string Telescope => FitsFile?.ReadHDU()?.Telescope;
+
+        public DateTime? ObservationDate => FitsFile?.ReadHDU()?.ObservationDate;
+
+        internal nom.tam.fits.Fits FitsFile { get; set; }
     }
 }
