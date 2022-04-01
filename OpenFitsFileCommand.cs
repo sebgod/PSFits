@@ -37,6 +37,7 @@ namespace PSFits
             }
 
             var fits = new nom.tam.fits.Fits(fullName, FileAccess);
+            fits.ReadHDU();
             WriteObject(new FitsFileHandle {
                 FullName = fullName,
                 FitsFile = fits
