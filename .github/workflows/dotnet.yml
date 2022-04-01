@@ -48,6 +48,7 @@ jobs:
       run: mv bin/$BUILD_CONF/*/publish $PS_MODULE_NAME
     - name: Publish to PowerShell gallery
       run: |
-        Update-ModuleManifest -Path $ENV:PS_MODULE_NAME/$($ENV:PS_MODULE_NAME).psd1 -ModuleVersion [version]$ENV:PKG_VERSION
+        $version = [version]"$($ENV:PKG_VERSION).0"
+        Update-ModuleManifest -Path $ENV:PS_MODULE_NAME/$($ENV:PS_MODULE_NAME).psd1 -ModuleVersion $version
         Publish-Module -Path $ENV:PS_MODULE_NAME -NuGetApiKey ${{ secrets.NUGET_API_KEY }} -Verbose 
       shell: pwsh
