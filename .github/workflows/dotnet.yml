@@ -1,4 +1,4 @@
-name: .NET
+name: CI/CD
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ master ]
     
 env:
-  PKG_VERSION: 1.${{ github.run_number }}.${{ github.run_attempt }}
+  PKG_VERSION: 1.1.${{ github.run_number }}${{ github.run_attempt }}
   BUILD_CONF: Release
 
 jobs:
@@ -27,7 +27,7 @@ jobs:
       run: dotnet build -c $BUILD_CONF --no-restore --version-suffix +${{ github.sha }} -p:VersionPrefix=$PKG_VERSION -p:FileVersion=${PKG_VERSION}.0
     - name: Publish
       run: dotnet publish -c $BUILD_CONF --no-build 
-    - name: 'Upload Artifact'
+    - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
         name: publish-folder
