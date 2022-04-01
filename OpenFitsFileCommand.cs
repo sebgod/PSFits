@@ -36,12 +36,7 @@ namespace PSFits
                 throw new FileNotFoundException($"Cannot find file {fullName}", fullName);
             }
 
-            var fits = new nom.tam.fits.Fits(fullName, FileAccess);
-            fits.ReadHDU();
-            WriteObject(new FitsFileHandle {
-                FullName = fullName,
-                FitsFile = fits
-            });
+            WriteObject(new FitsFileHandle(fullName, FileAccess));
         }
 
         // This method will be called once at the end of pipeline execution; if no input is received, this method is not called
@@ -60,20 +55,27 @@ namespace PSFits
 
     public class FitsFileHandle
     {
-        public string FullName { get; internal set; }
-
-        public int Size => FitsFile?.Size() ?? -1;
-
-        public string Author => FitsFile?.ReadHDU()?.Author;
-
-        public int[] Axes => FitsFile?.ReadHDU()?.Axes;
-
-        public string Instrument => FitsFile?.ReadHDU()?.Instrument;
-
-        public string Telescope => FitsFile?.ReadHDU()?.Telescope;
-
-        public DateTime? ObservationDate => FitsFile?.ReadHDU()?.ObservationDate;
+        public FitsFileHandle(string fullName, FileAccess fileAccess)
+        {
+            PrimaryHDU = (FitsFile = new nom.tam.fits.Fits(FullName = fullName, fileAccess)).ReadHDU();
+        }
 
         internal nom.tam.fits.Fits FitsFile { get; set; }
+
+        internal nom.tam.fits.BasicHDU PrimaryHDU { get; }
+
+        public string FullName { get; }
+
+        public int Size => FitsFile.Size();
+
+        public string Author => PrimaryHDU.Author;
+
+        public int[] Axes => PrimaryHDU.Axes;
+
+        public string Instrument => PrimaryHDU.Instrument;
+
+        public string Telescope => PrimaryHDU.Telescope;
+
+        public DateTime ObservationDate => PrimaryHDU.ObservationDate;
     }
 }
