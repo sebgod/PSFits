@@ -7,6 +7,7 @@ on:
     branches: [ master ]
     
 env:
+  PS_MODULE_NAME: PSFits
   PKG_VERSION: 1.1.${{ github.run_number }}${{ github.run_attempt }}
   BUILD_CONF: Release
 
@@ -44,7 +45,9 @@ jobs:
       with:
         name: publish-folder
     - name: Rename publish folder to module folder
-      run: mv bin/$BUILD_CONF/*/publish PSFits
+      run: mv bin/$BUILD_CONF/*/publish $PS_MODULE_NAME
     - name: Publish to PowerShell gallery
-      run: Publish-Module -Path PSFits -NuGetApiKey ${{ secrets.NUGET_API_KEY }} -Verbose 
+      run: |
+        Update-ModuleManifest -Path $ENV:PS_MODULE_NAME/$($ENV:PS_MODULE_NAME).psd1 -ModuleVersion [version]$ENV:PKG_VERSION
+        Publish-Module -Path $ENV:PS_MODULE_NAME -NuGetApiKey ${{ secrets.NUGET_API_KEY }} -Verbose 
       shell: pwsh

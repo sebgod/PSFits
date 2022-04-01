@@ -12,7 +12,7 @@
 RootModule = 'PSFits.dll'
 
 # Version number of this module.
-ModuleVersion = '0.0.4'
+ModuleVersion = '0.0.5'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -87,7 +87,7 @@ AliasesToExport = @()
 # ModuleList = @()
 
 # List of all files packaged with this module
-FileList = @('NETStdFITS.dll', 'PSFits.deps.json', 'PSFits.dll', 'PSFits.psd1')
+FileList = @('NETStdFITS.dll', 'PSFits.deps.json', 'PSFits.dll', 'PSFits.psd1', 'LICENSE')
 
 # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
 PrivateData = @{
