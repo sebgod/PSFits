@@ -12,7 +12,7 @@
 RootModule = 'PSFits.dll'
 
 # Version number of this module.
-ModuleVersion = '0.0.5'
+ModuleVersion = '0.1.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -72,7 +72,7 @@ Description = 'Supports reading and writing FITS files'
 FunctionsToExport = @()
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-CmdletsToExport = @('Open-FitsFile')
+CmdletsToExport = @('Open-FitsFile', 'Close-FitsFile')
 
 # Variables to export from this module
 VariablesToExport = '*'
