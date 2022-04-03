@@ -1,4 +1,6 @@
-﻿using System;
+﻿using nom.tam.fits;
+using nom.tam.util;
+using System;
 using System.Globalization;
 using System.IO;
 
@@ -6,26 +8,42 @@ namespace PSFits
 {
     public class FitsFileHandle
     {
-        public FitsFileHandle(string fullName, FileAccess fileAccess)
+        public FitsFileHandle(object data)
         {
-            PrimaryHDU = (FitsFile = new nom.tam.fits.Fits(FullName = fullName, fileAccess)).ReadHDU();
+            FitsFile = new Fits();
+            PrimaryHDU = FitsFactory.HDUFactory(data);
         }
 
-        internal nom.tam.fits.Fits FitsFile { get; }
+        public FitsFileHandle(string fullName, FileAccess fileAccess)
+        {
+            PrimaryHDU = (FitsFile = new Fits(FullName = fullName, fileAccess)).ReadHDU();
+        }
 
-        internal nom.tam.fits.BasicHDU PrimaryHDU { get; }
+        internal Fits FitsFile { get; }
 
-        public long Size => PrimaryHDU.Size;
+        internal BasicHDU PrimaryHDU { get; }
 
-        public string FullName { get; }
+        public string FullName { get; set; }
 
-        public string Author => PrimaryHDU.Author;
+        public string Author
+        {
+            get => PrimaryHDU.Author;
+            set => SetValue("AUTHOR", value);
+        }
 
         public int[] Axes => PrimaryHDU.Axes;
 
-        public string Instrument => PrimaryHDU.Instrument;
+        public string Instrument
+        {
+            get => PrimaryHDU.Instrument;
+            set => SetValue("INSTRUME", value);
+        }
 
-        public string Telescope => PrimaryHDU.Telescope;
+        public string Telescope
+        {
+            get => PrimaryHDU.Telescope;
+            set => SetValue("TELESCOP", value);
+        }
 
         public DateTime? ObservationStartDateTime => ReadDate("DATE-OBS");
 
@@ -33,23 +51,55 @@ namespace PSFits
 
         public DateTime? ObservationEndDateTime => ReadDate("DATE-END");
 
-        public double ObserverLatitude => ReadDouble("OBSLAT");
+        public double ObserverLatitude
+        {
+            get => ReadDouble("OBSLAT");
+            set => SetValue("OBSLAT", value);
+        }
 
-        public double ObserverLongitude => ReadDouble("OBSLONG");
+        public double ObserverLongitude
+        {
+            get => ReadDouble("OBSLONG");
+            set => SetValue("OBSLONG", value);
+        }
 
-        public string Software => PrimaryHDU.GetTrimmedString("SWCREATE");
+        public string Software
+        {
+            get => PrimaryHDU.GetTrimmedString("SWCREATE");
+            set => SetValue("SWCREATE", value);
+        }
 
-        public double Equinox => PrimaryHDU.Equinox;
+        public double Equinox
+        {
+            get => PrimaryHDU.Equinox;
+            set => SetValue("EQUINOX", value);
+        }
 
-        public string Filter => PrimaryHDU.GetTrimmedString("FILTER");
+        public string Filter
+        {
+            get => PrimaryHDU.GetTrimmedString("FILTER");
+            set => SetValue("FILTER", value);
+        }
 
-        public string FrameType => PrimaryHDU.GetTrimmedString("FRAMETYP");
+        public string FrameType
+        {
+            get => PrimaryHDU.GetTrimmedString("FRAMETYP");
+            set => SetValue("FRAMETYP", value);
+        }
 
         public string Object => PrimaryHDU.Object;
 
-        public double RA => ReadDouble("RA");
+        public double RA
+        {
+            get => ReadDouble("RA");
+            set => SetValue("RA", value);
+        }
 
-        public double DEC => ReadDouble("DEC");
+        public double DEC
+        {
+            get => ReadDouble("DEC");
+            set => SetValue("DEC", value);
+        }
 
         public double BScale => PrimaryHDU.BScale;
 
@@ -57,19 +107,45 @@ namespace PSFits
 
         public int BitDepth => PrimaryHDU.BitPix;
 
-        public int BlackLevel => ReadInt("BLKLEVEL");
+        public int BlackLevel
+        {
+            get => ReadInt("BLKLEVEL");
+            set => SetValue("BLKLEVEL", value);
+        }
 
-        public int Gain => ReadInt("GAIN");
+        public int Gain
+        {
+            get => ReadInt("GAIN");
+            set => SetValue("GAIN", value);
+        }
 
-        public double XPixelSize => ReadDouble("XPIXSZ");
+        public double XPixelSize {
+            get => ReadDouble("XPIXSZ"); set => SetValue("XPIXSZ", value);
+        }
 
-        public double YPixelSize => ReadDouble("YPIXSZ");
+        public double YPixelSize
+        {
+            get => ReadDouble("YPIXSZ");
+            set => SetValue("YPIXSZ", value);
+        }
 
-        public int XBinning => ReadInt("XBINNING", 1);
+        public int XBinning
+        {
+            get => ReadInt("XBINNING", 1);
+            set => SetValue("YBINNING", value);
+        }
 
-        public int YBinning => ReadInt("YBINNING", 1);
+        public int YBinning
+        {
+            get => ReadInt("YBINNING", 1);
+            set => SetValue("YBINNING", value);
+        }
 
-        public int FocalLength => ReadInt("FOCALLEN");
+        public int FocalLength
+        {
+            get => ReadInt("FOCALLEN");
+            set => SetValue("FOCALLEN", value);
+        }
 
         public TimeSpan? ExposureTime
         {
@@ -78,9 +154,15 @@ namespace PSFits
                 var expTimeSec = ReadDouble("EXPTIME");
                 return !double.IsNaN(expTimeSec) ? TimeSpan.FromSeconds(expTimeSec) : null as TimeSpan?;
             }
+
+            set => SetValue("EXPTIME", value?.TotalSeconds);
         }
 
-        public double? Temperature => ReadDouble("CCD-TEMP");
+        public double? Temperature
+        {
+            get => ReadDouble("CCD-TEMP");
+            set => SetValue("CCD-TEMP", value);
+        }
 
         #region Helper functions
         double ReadDouble(string prop, double @default = double.NaN) => PrimaryHDU.Header?.GetDoubleValue(prop, @default) ?? @default;
@@ -91,6 +173,53 @@ namespace PSFits
             DateTime.TryParse(PrimaryHDU.GetTrimmedString(prop), CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var date)
                 ? date
                 : null as DateTime?;
+
+        void SetValue(string key, int value)
+        {
+            var (cursor, comment) = RemoveExistingCard(key);
+            cursor.Add(key, new HeaderCard(key, value, comment));
+        }
+
+        void SetValue(string key, double value)
+        {
+            var (cursor, comment) = RemoveExistingCard(key);
+            cursor.Add(key, new HeaderCard(key, value, comment));
+        }
+
+        void SetValue(string key, string value)
+        {
+            var (cursor, comment) = RemoveExistingCard(key);
+            cursor.Add(key, new HeaderCard(key, value, comment));
+        }
+
+        void SetValue(string key, double? maybeValue)
+        {
+            var (cursor, comment) = RemoveExistingCard(key);
+
+            if (maybeValue.HasValue && !double.IsNaN(maybeValue.Value))
+            {
+                cursor.Add(key, new HeaderCard(key, maybeValue.Value, comment));
+            }
+        }
+
+        (Cursor cursor, string comment) RemoveExistingCard(string key)
+        {
+            var header = PrimaryHDU.Header;
+            var card = header.FindCard(key);
+            var cursor = header.GetCursor();
+            string comment;
+            if (card != null)
+            {
+                comment = card.Comment;
+                header.RemoveCard(card);
+            }
+            else
+            {
+                comment = null;
+            }
+            return (cursor, comment);
+        }
+
         #endregion
     }
 }

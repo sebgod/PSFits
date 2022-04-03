@@ -33,7 +33,7 @@ namespace PSFits
             WriteObject(new FitsFileHandle(fullName, FileAccess));
         }
 
-        public static string NormalizePath(string path) => 
+        public static string NormalizePath(string path) =>
             System.IO.Path.GetFullPath(new Uri(path).LocalPath).TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
     }
 }
