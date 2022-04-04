@@ -9,11 +9,15 @@ namespace PSFits
     public class FitsFileHandle
     {
         public static string NormalizePath(string path) =>
-            System.IO.Path.GetFullPath(new Uri(path).LocalPath).TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+            Uri.TryCreate(Path.IsPathRooted(path) ? path : Path.Combine(Directory.GetCurrentDirectory(), path), UriKind.RelativeOrAbsolute, out var uri)
+                ? Path.GetFullPath(uri.LocalPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                : path;
 
         public FitsFileHandle(string path, object data)
         {
-            FitsFile = new Fits(FullName = NormalizePath(path), FileAccess.ReadWrite);
+            FitsFile = File.Exists(FullName = NormalizePath(path))
+                ? new Fits(FullName, FileAccess.ReadWrite)
+                : new Fits();
             PrimaryHDU = FitsFactory.HDUFactory(data);
         }
 
