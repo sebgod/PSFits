@@ -11,13 +11,13 @@ namespace PSFits
         [Parameter(
             Mandatory = true,
             Position = 0,
-            ValueFromPipeline = false,
+            ValueFromPipeline = true,
             ValueFromPipelineByPropertyName = true)]
         public FitsFileHandle FitsFile { get; set; }
 
         protected override void ProcessRecord()
         {
-            if (FitsFile?.PrimaryHDU.Rewriteable == true)
+            if (FitsFile?.PrimaryHDU?.Rewriteable == true)
             {
                 FitsFile.PrimaryHDU.Rewrite();
                 WriteObject(FitsFile);
@@ -28,7 +28,7 @@ namespace PSFits
             }
             else
             {
-                using (FileStream fileStream = File.Create(FitsFile?.FullName))
+                using (FileStream fileStream = File.Create(FitsFile.FullName))
                 using (BufferedDataStream os = new BufferedDataStream(fileStream))
                 {
                     FitsFile.Handle.Write(os);
