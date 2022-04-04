@@ -24,7 +24,7 @@ namespace PSFits
 
         protected override void ProcessRecord()
         {
-            if (Path != null && Data != null && File.Exists(Path))
+            if (Path != null && Data != null)
             {
                 var fitsFile = new FitsFileHandle(Path, Data);
                 WriteObject(fitsFile);
