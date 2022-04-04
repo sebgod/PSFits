@@ -72,7 +72,7 @@ Description = 'Supports reading and writing FITS files'
 FunctionsToExport = @()
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-CmdletsToExport = @('Open-FitsFile', 'Close-FitsFile')
+CmdletsToExport = @('Open-FitsFile', 'Close-FitsFile', 'New-FitsFile')
 
 # Variables to export from this module
 VariablesToExport = '*'

@@ -24,16 +24,12 @@ namespace PSFits
         // This method will be called for each input received from the pipeline to this cmdlet; if no input is received, this method is not called
         protected override void ProcessRecord()
         {
-            var fullName = NormalizePath(Path);
-            if (!File.Exists(fullName))
+            if (!File.Exists(Path))
             {
-                throw new FileNotFoundException($"Cannot find file {fullName}", fullName);
+                throw new FileNotFoundException($"Cannot find file {Path}", Path);
             }
 
-            WriteObject(new FitsFileHandle(fullName, FileAccess));
+            WriteObject(new FitsFileHandle(Path, FileAccess));
         }
-
-        public static string NormalizePath(string path) =>
-            System.IO.Path.GetFullPath(new Uri(path).LocalPath).TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
     }
 }

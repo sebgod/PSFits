@@ -8,22 +8,25 @@ namespace PSFits
 {
     public class FitsFileHandle
     {
-        public FitsFileHandle(object data)
+        public static string NormalizePath(string path) =>
+            System.IO.Path.GetFullPath(new Uri(path).LocalPath).TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+
+        public FitsFileHandle(string path, object data)
         {
-            FitsFile = new Fits();
+            FitsFile = new Fits(FullName = NormalizePath(path), FileAccess.ReadWrite);
             PrimaryHDU = FitsFactory.HDUFactory(data);
         }
 
-        public FitsFileHandle(string fullName, FileAccess fileAccess)
+        public FitsFileHandle(string path, FileAccess fileAccess)
         {
-            PrimaryHDU = (FitsFile = new Fits(FullName = fullName, fileAccess)).ReadHDU();
+            PrimaryHDU = (FitsFile = new Fits(FullName = NormalizePath(path), fileAccess)).ReadHDU();
         }
 
         internal Fits FitsFile { get; }
 
         internal BasicHDU PrimaryHDU { get; }
 
-        public string FullName { get; set; }
+        public string FullName { get; private set; }
 
         public string Author
         {
@@ -87,7 +90,11 @@ namespace PSFits
             set => SetValue("FRAMETYP", value);
         }
 
-        public string Object => PrimaryHDU.Object;
+        public string Object
+        {
+            get => PrimaryHDU.Object;
+            set => SetValue("OBJECT", value);
+        }
 
         public double RA
         {
