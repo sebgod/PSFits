@@ -15,7 +15,7 @@ namespace PSFits
 
         public FitsFileHandle(string path, object data)
         {
-            FitsFile = File.Exists(FullName = NormalizePath(path))
+            Handle = File.Exists(FullName = NormalizePath(path))
                 ? new Fits(FullName, FileAccess.ReadWrite)
                 : new Fits();
             PrimaryHDU = FitsFactory.HDUFactory(data);
@@ -23,10 +23,10 @@ namespace PSFits
 
         public FitsFileHandle(string path, FileAccess fileAccess)
         {
-            PrimaryHDU = (FitsFile = new Fits(FullName = NormalizePath(path), fileAccess)).ReadHDU();
+            PrimaryHDU = (Handle = new Fits(FullName = NormalizePath(path), fileAccess)).ReadHDU();
         }
 
-        internal Fits FitsFile { get; }
+        internal Fits Handle { get; }
 
         internal BasicHDU PrimaryHDU { get; }
 

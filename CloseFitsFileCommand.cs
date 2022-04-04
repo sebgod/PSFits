@@ -16,7 +16,7 @@ namespace PSFits
         {
             if (FitsFile != null)
             {
-                FitsFile.FitsFile.Close();
+                FitsFile.Handle.Close();
             }
         }
     }

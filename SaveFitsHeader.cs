@@ -16,14 +16,14 @@ namespace PSFits
 
         protected override void ProcessRecord()
         {
-            if (FitsFile != null && FitsFile.PrimaryHDU.Rewriteable)
+            if (FitsFile?.PrimaryHDU?.Rewriteable == true)
             {
-                FitsFile.PrimaryHDU.Rewrite();
+                FitsFile.PrimaryHDU.Header.Rewrite();
                 WriteObject(FitsFile);
             }
             else
             {
-                throw new InvalidDataException($"Fits file {FitsFile?.FullName} is not rewritable");
+                throw new InvalidDataException($"Primary header of FITS file \"{FitsFile?.FullName}\" is not rewritable");
             }
         }
     }
