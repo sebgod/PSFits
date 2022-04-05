@@ -47,10 +47,12 @@ jobs:
       with:
         name: publish-folder
     - name: Rename publish folder to module folder
-      run: mv bin/$BUILD_CONF/*/publish $PS_MODULE_NAME
+      run: |
+        mkdir  modules
+        mv $PS_MODULE_NAME/bin/$BUILD_CONF/*/publish modules/$PS_MODULE_NAME
     - name: Publish to PowerShell gallery
       run: |
         $version = [version]"$($ENV:VERSION_PREFIX).$($ENV:VERSION_REV)"
-        Update-ModuleManifest -Path $ENV:PS_MODULE_NAME/$($ENV:PS_MODULE_NAME).psd1 -ModuleVersion $version
-        Publish-Module -Path $ENV:PS_MODULE_NAME -NuGetApiKey ${{ secrets.NUGET_API_KEY }} -Verbose 
+        Update-ModuleManifest -Path modules/$ENV:PS_MODULE_NAME/$($ENV:PS_MODULE_NAME).psd1 -ModuleVersion $version
+        Publish-Module -Path modules/$ENV:PS_MODULE_NAME -NuGetApiKey ${{ secrets.NUGET_API_KEY }} -Verbose 
       shell: pwsh
