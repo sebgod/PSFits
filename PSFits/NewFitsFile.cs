@@ -4,20 +4,19 @@ namespace PSFits
 {
     [Cmdlet(VerbsCommon.New, "FitsFile")]
     [OutputType(typeof(FitsFileHandle))]
-    public class NewFitsFile
-        : PSCmdlet
+    public class NewFitsFile : Cmdlet
     {
         [Parameter(
             Mandatory = true,
             Position = 0,
-            ValueFromPipeline = false,
+            ValueFromPipeline = true,
             ValueFromPipelineByPropertyName = true)]
         public string Path { get; set; }
 
         [Parameter(
             Mandatory = true,
             Position = 1,
-            ValueFromPipeline = true,
+            ValueFromPipeline = false,
             ValueFromPipelineByPropertyName = true)]
         public object Data { get; set; }
 

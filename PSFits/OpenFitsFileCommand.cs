@@ -6,7 +6,7 @@ namespace PSFits
 {
     [Cmdlet(VerbsCommon.Open, "FitsFile")]
     [OutputType(typeof(FitsFileHandle))]
-    public class OpenFitsFileCommand : PSCmdlet
+    public class OpenFitsFileCommand : Cmdlet
     {
         [Parameter(
             Mandatory = true,

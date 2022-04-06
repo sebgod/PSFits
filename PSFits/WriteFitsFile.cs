@@ -6,7 +6,7 @@ namespace PSFits
 {
     [Cmdlet(VerbsCommunications.Write, "FitsFile")]
     [OutputType(typeof(FitsFileHandle))]
-    public class WriteFitsFile : PSCmdlet
+    public class WriteFitsFile : Cmdlet
     {
         [Parameter(
             Mandatory = true,

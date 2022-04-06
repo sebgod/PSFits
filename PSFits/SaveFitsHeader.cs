@@ -5,7 +5,7 @@ namespace PSFits
 {
     [Cmdlet(VerbsData.Save, "FitsHeader")]
     [OutputType(typeof(FitsFileHandle))]
-    public class SaveFitsHeader : PSCmdlet
+    public class SaveFitsHeader : Cmdlet
     {
         [Parameter(
             Mandatory = true,

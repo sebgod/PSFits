@@ -9,7 +9,7 @@ namespace PSFits
     public class FitsFileHandle
     {
         public static string NormalizePath(string path) =>
-            Uri.TryCreate(path, UriKind.RelativeOrAbsolute, out var uri)
+            Uri.TryCreate(path, UriKind.Absolute, out var uri)
                 ? Path.GetFullPath(uri.LocalPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
                 : path;
 
