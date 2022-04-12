@@ -17,9 +17,17 @@ namespace PSFits
 
         protected override void ProcessRecord()
         {
-            if (FitsFile?.PrimaryHDU?.Header?.Rewriteable == true)
+            if (FitsFile == null)
             {
-                FitsFile.PrimaryHDU.Header.Rewrite();
+                return;
+            }
+            else if (!FitsFile.FileAccess.HasFlag(FileAccess.Write))
+            {
+                throw new InvalidDataException($"FITS file \"{FitsFile?.FullName}\" is opened read-only");
+            }
+            else if (FitsFile?.PrimaryHDU?.Rewriteable == true)
+            {
+                FitsFile.PrimaryHDU.Rewrite();
                 WriteObject(FitsFile);
             }
             else if (FitsFile?.Handle?.Stream is BufferedFile bf && bf.CanSeek && bf.CanWrite)
@@ -31,7 +39,7 @@ namespace PSFits
             }
             else
             {
-                throw new InvalidDataException($"Primary header of FITS file \"{FitsFile?.FullName}\" is not writable!");
+                throw new InvalidDataException($"FITS file \"{FitsFile?.FullName}\" is has no writable file stream");
             }
         }
     }

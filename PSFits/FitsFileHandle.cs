@@ -21,11 +21,11 @@ namespace PSFits
             {
                 using (var _ = File.Create(FullName))
                 {
-                    // empty
+                    // create emptyt file
                 }
             }
 
-            Handle = new Fits(FullName, false, FileAccess.ReadWrite);
+            Handle = new Fits(FullName, false, FileAccess = FileAccess.ReadWrite);
             PrimaryHDU = Handle.ReadHDU();
             if (PrimaryHDU is null)
             {
@@ -35,10 +35,17 @@ namespace PSFits
 
         public FitsFileHandle(string path, FileAccess fileAccess)
         {
-            PrimaryHDU = (Handle = new Fits(FullName = NormalizePath(path), fileAccess)).ReadHDU();
+            PrimaryHDU = (Handle = new Fits(FullName = NormalizePath(path), FileAccess = fileAccess)).ReadHDU();
+
+            if (PrimaryHDU is null)
+            {
+                throw new ArgumentException("File contains no HDU", nameof(path));
+            }
         }
 
         internal Fits Handle { get; }
+
+        public FileAccess FileAccess { get; }
 
         internal BasicHDU PrimaryHDU { get; }
 
