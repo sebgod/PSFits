@@ -22,7 +22,7 @@ namespace PSFits
                 FitsFile.PrimaryHDU.Header.Rewrite();
                 WriteObject(FitsFile);
             }
-            else if (FitsFile.Handle.Stream is BufferedFile bf && bf.CanSeek && bf.CanWrite)
+            else if (FitsFile?.Handle?.Stream is BufferedFile bf && bf.CanSeek && bf.CanWrite)
             {
                 bf.Seek(0);
                 bf.SetLength(0);
