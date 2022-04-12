@@ -5,6 +5,12 @@
     <AssemblyName>PSFits</AssemblyName>
   </PropertyGroup>
 
+  <ItemGroup>
+	<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>PSFits.Tests</_Parameter1>
+	</AssemblyAttribute>
+  </ItemGroup>
+
   <PropertyGroup Condition=" '$(Version)' == '' ">
 	<VersionPrefix Condition=" '$(VersionPrefix)' == '' ">1.0.0</VersionPrefix>
 	<Version Condition=" '$(VersionSuffix)' != '' And $(VersionSuffix[0]) != '+'">$(VersionPrefix)-$(VersionSuffix)</Version>

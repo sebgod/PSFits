@@ -1,11 +1,12 @@
-﻿using System.IO;
+﻿using nom.tam.util;
+using System.IO;
 using System.Management.Automation;
 
 namespace PSFits
 {
-    [Cmdlet(VerbsData.Save, "FitsHeader")]
+    [Cmdlet(VerbsData.Save, "FitsFile")]
     [OutputType(typeof(FitsFileHandle))]
-    public class SaveFitsHeader : Cmdlet
+    public class SaveFitsFile : Cmdlet
     {
         [Parameter(
             Mandatory = true,
@@ -21,9 +22,16 @@ namespace PSFits
                 FitsFile.PrimaryHDU.Header.Rewrite();
                 WriteObject(FitsFile);
             }
+            else if (FitsFile.Handle.Stream is BufferedFile bf && bf.CanSeek && bf.CanWrite)
+            {
+                bf.Seek(0);
+                bf.SetLength(0);
+                FitsFile.Handle.Write(bf);
+                WriteObject(FitsFile);
+            }
             else
             {
-                throw new InvalidDataException($"Primary header of FITS file \"{FitsFile?.FullName}\" is not rewritable");
+                throw new InvalidDataException($"Primary header of FITS file \"{FitsFile?.FullName}\" is not writable!");
             }
         }
     }
